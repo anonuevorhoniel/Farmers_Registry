@@ -12,10 +12,34 @@ class AssistanceHistoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $histories = AssistanceHistory::with('farmer', 'assistance')->get();
-        return view('histories/index', ['histories' =>$histories]);
+        if ($request->ajax()) {
+            $histories = AssistanceHistory::select('*');
+            return dataTables()->of($histories)
+            ->addColumn( 'action', function ($history) {
+                return ' <div class="dropdown">
+                <button class="btn btn-sm btn-warning dropdown-toggle" type="button" data-toggle="dropdown"
+                    aria-expanded="false">
+                    Action
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/histories/' . $history->id . '/edit"> Edit </a></li>
+                    <li><a class="dropdown-item" href="/histories/' . $history->id . '/destroy">Delete</a>
+                    </li>
+                </ul>
+            </div>';
+            })
+            ->addColumn('firstname', function ($history) {
+                return $history->farmer->first_name;
+            })
+            ->addColumn('assistance', function($history)
+            {
+                return $history->assistance->name;
+            })
+            ->make(true);
+        }
+        return view('histories/index');
     }
 
     /**

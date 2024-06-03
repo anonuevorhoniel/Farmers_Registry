@@ -9,7 +9,7 @@
 @endsection
 
 @section('folder')
-    Farms
+    Farms   
 @endsection
 
 @section('file')
@@ -17,43 +17,58 @@
 @endsection
 
 @section('content')
-    <a href="/farms/create"><button class="btn btn-dark">+ Add Farms</button></a><br><br>
-    <table class="table table-hover table-striped">
+    <div class="row">
+        <a href="/farms/create"><button class="btn btn-dark">+ Add Farms</button></a>
+        
+    </div>
+    <br>
+    <table id="tbl_farms" class="table table-hover">
         <thead class="thead-dark">
             <th>Farm Name</th>
-            <th>Location</th>
-            <th>Size</th>
-            <th>Type of Crops</th>
+           <th>Location</th>
+          <th>Size</th>
+          <th>Type of Crop</th> 
             <th>Action</th>
         </thead>
-        <tbody>
-            @if ($farms->count() > 0)
-                @foreach ($farms as $farm)
-                    <tr>
-                        <td>{{ $farm->name }}</td>
-                        <td>{{ $farm->location }}</td>
-                        <td>{{ $farm->size }}</td>
-                        <td>{{ $farm->crop_type }}</td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-warning dropdown-toggle" type="button" data-toggle="dropdown"
-                                    aria-expanded="false">
-                                    Action
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/farms/{{ $farm->id }}/edit">Edit</a></li>
-                                    <li><a class="dropdown-item" href="/farms/{{ $farm->id }}/destroy">Delete</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
-            @else
-                <tr>
-                    <td colspan="5" style="text-align: center">No Farms Yet</td>
-                </tr>
-            @endif
+    </table><br>
+    <script>
+   $(document).ready(function() {
+    var table = $('#tbl_farms').DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth: false,
+        ajax : "{{url('/farms/index')}}",
+        columns:[{
+                data: "name",
+                name: "name"
+                },
+                {
+                data: "city.name",
+                name: "city.name"
+                },
+                {
+                data: "size",
+                name: "size"
+                },
+                {
+                data: "crop_type",
+                name: "crop_type"
+                },
+                {
+                data: "action",
+                name: "action"
+                }
+            ]
+        
+        }
+    );
 
-        </tbody>
-    </table>
+  
+});
+
+
+
+        
+    </script>
+
 @endsection

@@ -33,7 +33,18 @@ Edit
         </div>
         <div class="col-12">
             <label for="exampleInputPassword1" class="form-label">Location<b style="color: red">*</b></label>
-          <input type="text" class="form-control" name="location" value="{{$farm->location}}" id="exampleInputPassword1">
+          <select type="text" class="form-control" name="location"  id="exampleInputPassword1">
+            <option value="{{$farm->city->id}}" selected>{{$farm->city->name}}</option>
+            @if($cities->count() > 0)
+            @foreach($cities as $city)
+            @if($city->id !== $farm->city->id)
+            <option value="{{$city->id}}">{{$city->name}}</option>
+            @endif
+            @endforeach
+            @else
+            <option value="" selected disabled>No Cities</option>
+            @endif
+          </select>
         </div>
         <div class="col-12">
             <label for="exampleInputPassword1" class="form-label">Size<b style="color: red">*</b></label>
@@ -41,7 +52,18 @@ Edit
         </div>
         <div class="col-12">
             <label for="exampleInputPassword1" class="form-label">Crop type<b style="color: red">*</b></label>
-          <input type="text" class="form-control" name="crop_type" value="{{$farm->crop_type}}" id="exampleInputPassword1">
+          <select class="form-control" name="crop_type"  id="exampleInputPassword1">
+            <option value="{{$farm->crop_type}}" selected>{{$farm->crop_type}}</option>
+            @if($crops->count() > 0)
+            @foreach($crops as $crop)
+            @if($crop->name !== $farm->crop_type)
+            <option value="{{$crop->name}}">{{$crop->name}}</option>
+            @endif
+            @endforeach
+            @else
+            <option value="" disabled>No Crops</option>
+            @endif
+          </select>
         </div>
     </div>
     <center>

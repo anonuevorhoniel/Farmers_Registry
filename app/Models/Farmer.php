@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Farm;
+use App\Models\FarmerType;
+use App\Models\AssistanceHistory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,5 +24,10 @@ class farmer extends Model
     public function farmerType()
     {
         return $this->belongsTo(FarmerType::class);
+    }
+    
+    public function assistanceHistory()
+    {
+        return $this->hasMany(AssistanceHistory::class);
     }
 }

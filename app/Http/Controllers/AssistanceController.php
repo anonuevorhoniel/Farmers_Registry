@@ -10,10 +10,30 @@ class AssistanceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('/assistances/index', ['assistances' => Assistance::all()]);
+        if ($request->ajax()) {
+            $assistances = assistance::select('*');
+    
+            // Create custom data for each assistance
+            return datatables()->of($assistances)
+            ->addColumn('action', function ($assistance) {
+                return '  <div class="dropdown">
+                <button class="btn btn-sm btn-warning dropdown-toggle" type="button" data-toggle="dropdown"
+                    aria-expanded="false">
+                    Action
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item editbtn" data-name="' . $assistance->name . '" href="/assistances/' . $assistance->id . '/edit">Edit</a></li>
+                    <li><a class="dropdown-item" href="/assistances/' . $assistance->id . '/destroy">Delete</a></li>
+                </ul>
+            </div>';
+            })
+          ->make(true);
+        }
+        return view('assistances.index');
     }
+    
 
     /**
      * Show the form for creating a new resource.

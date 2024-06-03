@@ -12,14 +12,32 @@ class FarmerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $farmer = Farmer::with('farmerType','farm')->get();
-        $type = FarmerType::all();
-        $farm = Farm::all();
-        return view('farmers/index', ['farmers'=> $farmer, 'types' => $type, 'farms' => $farm ]);
+        if ($request->ajax()) {
+            $farmers = Farmer::with('farm', 'farmerType')->select('*');
+    
+            // Create custom data for each assistance
+            return dataTables()->of($farmers)
+            ->addColumn('action', function ($farmer) {
+                return '   <div class="dropdown">
+                <button class="btn btn-sm btn-warning dropdown-toggle" type="button" data-toggle="dropdown"
+                    aria-expanded="false">
+                    Action
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/farmers/' . $farmer->id . '/show">View</a></li>
+                    <li><a class="dropdown-item" href="/farmers/' . $farmer->id . '/edit">Edit</a></li>
+                    <li><a class="dropdown-item" href="/farmers/' . $farmer->id . '/destroy">Delete</a></li>
+                </ul>
+            </div>';
+            })
+          ->make(true);
+        }
+        // Load the view with data as usual
+        return view('farmers.index');
     }
-
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -50,7 +68,7 @@ class FarmerController extends Controller
             'farm_id' => $request->input('farm_id'),
             'farmer_type_id' => $request->input('farmer_type_id'),
         ]);
-        return redirect()->back()->withInput();
+        return redirect()->back();
     }
 
     /**
@@ -58,7 +76,7 @@ class FarmerController extends Controller
      */
     public function show($id)
     {
-        $farmer = Farmer::find($id)->with('farm', 'farmerType')->first();;
+        $farmer = Farmer::find($id);
         return view('/farmers/show', ['farmer'=> $farmer]);
     }
 
@@ -69,7 +87,7 @@ class FarmerController extends Controller
     {
         $type = FarmerType::all();
         $farm = Farm::all();
-        $farmer = Farmer::find($id)->with('farm', 'farmerType')->first();
+        $farmer = Farmer::with('farm', 'farmerType')->find($id);
         return view('/farmers/edit', ['farmer'=> $farmer, 'types' => $type, 'farms'=> $farm]);
     }
 

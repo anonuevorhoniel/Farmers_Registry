@@ -27,7 +27,7 @@ Edit
         @csrf
         <div class="row">
         <div class="col-12">
-            <label for="exampleInputPassword1" class="form-label">Assistance <b style="color: red">*</b></label>
+            <label for="exampleInputPassword1" class="form-label">Farmer <b style="color: red">*</b></label>
             <select name="farmer_id" id="" class="form-control" >
             <option selected  value="{{$histories->farmer->id}}">{{$histories->farmer->first_name}}</option>
             @if($farmers->count() > 0)
@@ -55,7 +55,7 @@ Edit
             </select>
         </div>
         <div class="col-12">
-            <label for="exampleInputPassword1" class="form-label">Assistance <b style="color: red">*</b></label>
+            <label for="exampleInputPassword1" class="form-label">Date<b style="color: red">*</b></label>
           <input type="date" class="form-control" name="given_date" value="{{$histories->given_date}}" id="exampleInputPassword1">
         </div>
     </div>

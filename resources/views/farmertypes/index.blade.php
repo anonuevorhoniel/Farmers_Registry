@@ -19,7 +19,7 @@ Index
 @section('content')
 
 <a href="/farmertypes/create"><button class="btn btn-dark">+ Add Crops</button></a><br><br>
-<table class="table table-hover table-striped" style="text-align: center">
+<table id="tbl_types" style="text-align: center" class="table table-hover">
     <thead class="thead-dark">
         <th>Type of Farmers</th>
         <th style="width: 20%">Action</th>
@@ -42,10 +42,16 @@ Index
            @endforeach
     @else
         <tr>
-            <td colspan="5" style="text-align: center">No Type of Farmers Yet</td>
+            <td>No Type of Farmers Yet</td>
+            <td></td>
         </tr>
     @endif
     
     </tbody>
-</table>
+</table><br>
+<script>
+    $(document).ready(function() {
+        $('#tbl_types').DataTable();
+    });
+</script>
 @endsection

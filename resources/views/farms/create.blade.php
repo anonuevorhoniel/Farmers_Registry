@@ -37,7 +37,15 @@ Create
         </div>
         <div class="col-6">
           <label for="exampleInputPassword1" class="form-label">Location<b style="color: red">*</b></label>
-          <input type="text" class="form-control" name="location" value="{{old('location')}}" id="exampleInputPassword1">
+          <select class="form-control" name="city_id" value="{{old('location')}}" id="exampleInputPassword1">
+            @if($cities->count() > 0)
+            @foreach($cities as $city)
+            <option value="{{$city->id}}">{{$city->name}}</option>
+            @endforeach
+            @else
+            <option value="" selected disabled> No Cities Yet</option>
+            @endif
+          </select> 
         </div>
     </div>
     <div class="row">
