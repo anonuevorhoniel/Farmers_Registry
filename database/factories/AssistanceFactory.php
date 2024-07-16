@@ -25,6 +25,7 @@ class AssistanceFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
+            'value' => $this->faker->numberBetween(2000, 10000)
         ];
     }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Registration Page (v2)</title>
+    <title>Sign up | Farmers Registry</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -23,7 +23,8 @@
     <div class="register-box">
         <div class="card card-outline card-primary">
         <div class="card-header text-center">
-                <a href="AdminLTE/index2.html" class="h2">Register</a>
+            <img src="{{asset('faes.png')}}" style="width: 80px" alt=""><br>
+                <a href="AdminLTE/index2.html" class="h3">Register</a>
             </div>
             <div class="card-body">
                 @if ($errors->any())

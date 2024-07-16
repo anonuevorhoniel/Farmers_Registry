@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
+use DateTimeZone;
 use App\Models\City;
+use App\Models\AuditTrail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CityController extends Controller
@@ -33,9 +37,21 @@ class CityController extends Controller
             'name' => 'required',
             'area_code' => 'required||numeric'
         ]);
-        City::create($validate);
-        Alert::success('Success', 'Created Successfully!');
-        return redirect()->back();
+       $success = City::create($validate);
+       if($success)
+       {
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'user_name' => Auth::user()->name,
+            'table' => 'City',
+            'action' => 'Added',
+            'date' => $date->format('Y-m-d H:i:s')
+
+        ]);
+       }
+        return redirect()->back()->with('success', 'Added Successfully');
     }
 
     /**
@@ -65,6 +81,16 @@ class CityController extends Controller
         ]);
         $id = City::find($id);
         if ($id) {
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'City',
+                'action' => 'Updated',
+                'date' => $date->format('Y-m-d H:i:s')
+
+            ]);
             $id->update(
                 [
                     'name' => $request->name,
@@ -72,7 +98,7 @@ class CityController extends Controller
                 ]
             );
         }
-        return redirect()->back();
+        return redirect()->back()->with('edited', 'Edited Successfully');
     }
 
     /**
@@ -82,9 +108,17 @@ class CityController extends Controller
     {
         $id = City::find($id);
         if ($id) {
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'City',
+                'action' => 'Delete',
+                'date' => $date->format('Y-m-d H:i:s')
+            ]);
             $id->delete();
         }
-        Alert::success('Success', 'Deleted Successfully');
-        return redirect()->back();
+            return redirect()->back()->with('success', 'City Deleted');
     }
 }

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assistance;
-use App\Models\AssistanceHistory;
-use App\Models\farmer;
+use DateTime;
+use DateTimeZone;
+use App\Models\Farmer;
+use App\Models\Assistance;
+use App\Models\AuditTrail;
 use Illuminate\Http\Request;
+use App\Models\AssistanceHistory;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AssistanceHistoryController extends Controller
 {
@@ -15,7 +20,7 @@ class AssistanceHistoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $histories = AssistanceHistory::select('*');
+            $histories = AssistanceHistory::with('farmer', 'assistance')->select('*');
             return dataTables()->of($histories)
             ->addColumn( 'action', function ($history) {
                 return ' <div class="dropdown">
@@ -29,13 +34,6 @@ class AssistanceHistoryController extends Controller
                     </li>
                 </ul>
             </div>';
-            })
-            ->addColumn('firstname', function ($history) {
-                return $history->farmer->first_name;
-            })
-            ->addColumn('assistance', function($history)
-            {
-                return $history->assistance->name;
             })
             ->make(true);
         }
@@ -62,13 +60,26 @@ class AssistanceHistoryController extends Controller
             'assistance_id'=> 'required',
             'given_date'=> 'required'
         ]);
-        AssistanceHistory::create([
+        $success = AssistanceHistory::create([
            'farmer_id' => $validate['farmer_id'],
            'assistance_id' => $validate['assistance_id'],
            'given_date' => $validate['given_date']
 
         ]);
-        return redirect()->back();
+        if($success)
+        {
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'Assistance History',
+                'action' => 'Added',
+                'date' => $date->format('Y-m-d H:i:s')
+
+            ]);
+        return redirect()->back()->with('success', 'Added Successfully');
+        }
     }
 
     /**
@@ -99,12 +110,27 @@ class AssistanceHistoryController extends Controller
             'assistance_id'=> 'required',
             'given_date'=> 'required'
             ]);
+            if($history)
+            {
         $history->update([
             'farmer_id'=> $validate['farmer_id'],
             'assistance_id'=> $validate['assistance_id'],
             'given_date'=> $validate['given_date']
         ]);
-        return redirect()->back();
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'user_name' => Auth::user()->name,
+            'table' => 'Assistance History',
+            'action' => 'Updated',
+            'date' => $date->format('Y-m-d H:i:s')
+
+        ]);
+        return redirect()->back()->with('edited', 'Edited Successfully');
+
+            }
+
 
     }
 
@@ -114,7 +140,22 @@ class AssistanceHistoryController extends Controller
     public function destroy($id)
     {
         $history = AssistanceHistory::find($id);
-        $history->delete();
-        return redirect()->back();
+        if($history)
+        {
+          $history->delete();
+          $date = new DateTime();
+          $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+          AuditTrail::create([
+              'user_id' => Auth::user()->id,
+              'user_name' => Auth::user()->name,
+              'table' => 'Assistance History',
+              'action' => 'Deleted',
+              'date' => $date->format('Y-m-d H:i:s')
+
+          ]);
+          return redirect()->back()->with('success', 'Deleted Successfully');
+
+        }
+
     }
 }

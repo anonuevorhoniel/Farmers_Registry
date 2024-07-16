@@ -20,12 +20,12 @@ class farmer extends Model
     {
         return $this->belongsTo(Farm::class);
     }
-    
+
     public function farmerType()
     {
         return $this->belongsTo(FarmerType::class);
     }
-    
+
     public function assistanceHistory()
     {
         return $this->hasMany(AssistanceHistory::class);

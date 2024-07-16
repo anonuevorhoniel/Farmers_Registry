@@ -17,31 +17,33 @@
 @endsection
 
 @section('content')
-    <a href="/histories/create"><button class="btn btn-dark">+ Add Histories</button></a>
-    <br><br>
-    <table id="tbl_histories" class="table table-hover ">
-        <thead class="thead-dark">
+@section('add_btn')
+<a href="/histories/create"><button class="btn btn-dark">+ Add Histories</button></a>
+@endsection
+    <table id="tbl_histories" class="table table-hover table-bordered ">
+        <thead class="">
             <th>Farmer Name</th>
             <th>Assistance</th>
-            <th>Given Date</th>
+            <th>Given Date (YY-mm-dd)</th>
             <th style="width: 20%">Action</th>
         </thead>
     </table><br>
     <script>
         $(document).ready(function() {
-            $('#tbl_histories').DataTable({
+            var table = $('#tbl_histories').DataTable({
+                order: [],
                 processing: true,
                 serverSide: true,
                 autoWidth: false,
+                searching: true,
                 ajax: "{{ url('/histories/index') }}",
-                columns: [
-                    {
-                        data:"firstname",
-                        name:"firstname"
+                columns: [{
+                        data: "farmer.first_name",
+                        name: "farmer.first_name"
                     },
                     {
-                        data:"assistance",
-                        name:"assistance"
+                        data: "assistance.name",
+                        name: "assistance.name  "
                     },
                     {
                         data: "given_date",
@@ -53,6 +55,27 @@
                     }
                 ]
             });
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            // Trigger toast if session has success message
+            @if (session('success'))
+                toastr.error("{{ session('success') }}");
+            @endif
         });
     </script>
 @endsection

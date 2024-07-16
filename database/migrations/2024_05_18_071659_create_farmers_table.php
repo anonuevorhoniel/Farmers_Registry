@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('birth_date');
             $table->string('birth_place');
             $table->string('sex');
-            $table->unsignedBigInteger('contact_number');
+            $table->string('contact_number');
             $table->longText('other_information')->nullable();
             $table->unsignedBigInteger('farm_id');
             $table->unsignedBigInteger('farmer_type_id');

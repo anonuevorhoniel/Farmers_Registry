@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
+use DateTimeZone;
 use App\Models\CropType;
+use App\Models\AuditTrail;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CropTypeController extends Controller
 {
@@ -30,8 +35,19 @@ class CropTypeController extends Controller
     public function store(Request $request)
     {
         $validate = $request->validate(['name'=>'required']);
-        CropType::create($validate);
-        return redirect()->back();
+        $success = CropType::create($validate);
+        if($success){
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'Crop Type',
+                'action' => 'Added',
+                'date' => $date->format('Y-m-d H:i:s')
+            ]);
+            return redirect()->back()->with('success', 'Added Successfully');
+        }
     }
 
     /**
@@ -62,9 +78,19 @@ class CropTypeController extends Controller
         $validate = $request->validate(['name'=> 'required']);
         if($type = CropType::find($id))
         {
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'Crop Type',
+                'action' => 'Updated',
+                'date' => $date->format('Y-m-d H:i:s')
+
+            ]);
             $type->update($validate);
         }
-        return redirect()->back();
+        return redirect()->back()->with('edited', 'Edited Successfully');
     }
 
     /**
@@ -74,8 +100,18 @@ class CropTypeController extends Controller
     {
         if($type = CropType::find($id))
         {
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'Crop Type',
+                'action' => 'Deleted',
+                'date' => $date->format('Y-m-d H:i:s')
+
+            ]);
             $type->delete();
         }
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Deleted Successfully');
     }
 }

@@ -20,4 +20,8 @@ class AssistanceHistory extends Model
         {   
             return $this->belongsTo(Farmer::class);
         }
+        public function farms()
+        {
+            return $this->belongsTo(Farm::class);
+        }
     }

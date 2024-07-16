@@ -13,6 +13,6 @@ class CropTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        CropType::factory()->count(1)->create();
+        CropType::factory()->count(20)->create();
     }
 }

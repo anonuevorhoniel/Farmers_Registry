@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('city_id');
             $table->integer('size');
-            $table->string('crop_type');
             $table->timestamps();
             $table->softDeletes();
 

@@ -13,6 +13,6 @@ class AssistanceHistorySeeder extends Seeder
      */
     public function run(): void
     {
-        AssistanceHistory::factory()->count(1)->create();
+        AssistanceHistory::factory()->count(10000)->create();
     }
 }

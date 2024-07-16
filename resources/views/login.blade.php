@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Log in (v2)</title>
+    <title>Login | Farmers Registry</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -20,9 +20,11 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <!-- /.login-logo -->
+        <center>
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="../../index2.html" class="h1"><b>Farmers Registry</b></a>
+                <img src="{{asset('faes.png')}}" style="width: 80px" alt=""><br>
+                <a class="h3"><b>Farmers Registry</b></a>
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Sign in</p>
@@ -64,8 +66,7 @@
                         <button type="submit" class="btn btn-block btn-primary">
                             Sign in
                         </button>
-                        or
-                        <br>
+                        <hr>
                         <a href="/register" class="btn btn-block btn-danger">
                             Sign up
                         </a>
@@ -82,6 +83,7 @@
             </div>
             <!-- /.card-body -->
         </div>
+    </center>
         <!-- /.card -->
     </div>
     <!-- /.login-box -->

@@ -1,66 +1,95 @@
 @extends('layout')
 
 @section('title')
-Histories
+    Histories
 @endsection
 
 @section('head_title')
-Histories
+    Histories
 @endsection
 
 @section('folder')
-Histories
+    Histories
 @endsection
 
 @section('file')
-Edit
+    Edit
 @endsection
 
 @section('content')
-    @if($errors->any())
-    @foreach($errors->all() as $error)
-    <ul class="alert alert-danger" style="text-align: center">{{$error}}</ul>
-    @endforeach
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <ul class="alert alert-danger" style="text-align: center">{{ $error }}</ul>
+        @endforeach
     @endif
-    <a href="/histories/index"><button class="btn btn-dark btn-sm">Go back</button></a><br><br>
-    <form method="PUT" action="/histories/{{$histories->id}}/update">
-        @csrf
-        <div class="row">
+@section('add_btn')
+    <a href="/histories/index"><button class="btn btn-dark btn-sm">Go back</button></a>
+@endsection
+<form method="PUT" action="/histories/{{ $histories->id }}/update">
+    @csrf
+    <div class="row">
         <div class="col-12">
             <label for="exampleInputPassword1" class="form-label">Farmer <b style="color: red">*</b></label>
-            <select name="farmer_id" id="" class="form-control" >
-            <option selected  value="{{$histories->farmer->id}}">{{$histories->farmer->first_name}}</option>
-            @if($farmers->count() > 0)
-            @foreach($farmers as $farmer)
-            @if($histories->farmer->id !== $farmer->id)
-            <option value="{{$farmer->id}}">{{$farmer->first_name}}</option>
-            @endif
-            @endforeach
-            @else
-            @endif
-        </select>
+            <select name="farmer_id" id="" class="form-control">
+                <option selected value="{{ $histories->farmer->id }}">{{ $histories->farmer->first_name }}</option>
+                @if ($farmers->count() > 0)
+                    @foreach ($farmers as $farmer)
+                        @if ($histories->farmer->id !== $farmer->id)
+                            <option value="{{ $farmer->id }}">{{ $farmer->first_name }}</option>
+                        @endif
+                    @endforeach
+                @else
+                @endif
+            </select>
         </div>
         <div class="col-12">
             <label for="exampleInputPassword1" class="form-label">Assistance <b style="color: red">*</b></label>
-            <select name="assistance_id" id="" class="form-control" >
-                <option selected  value="{{$histories->assistance->id}}">{{$histories->assistance->name}}</option>
-                @if($assistances->count() > 0)
-                @foreach($assistances as $assistance)
-                @if($histories->assistance->id !== $assistance->id)
-                <option value="{{$assistance->id}}">{{$assistance->name}}</option>
-                @endif
-                @endforeach
+            <select name="assistance_id" id="" class="form-control">
+                <option selected value="{{ $histories->assistance->id }}">{{ $histories->assistance->name }}</option>
+                @if ($assistances->count() > 0)
+                    @foreach ($assistances as $assistance)
+                        @if ($histories->assistance->id !== $assistance->id)
+                            <option value="{{ $assistance->id }}">{{ $assistance->name }}</option>
+                        @endif
+                    @endforeach
                 @else
                 @endif
             </select>
         </div>
         <div class="col-12">
             <label for="exampleInputPassword1" class="form-label">Date<b style="color: red">*</b></label>
-          <input type="date" class="form-control" name="given_date" value="{{$histories->given_date}}" id="exampleInputPassword1">
+            <input type="date" class="form-control" name="given_date" value="{{ $histories->given_date }}"
+                id="datepicker">
         </div>
     </div>
     <center>
         <button type="submit" class="btn btn-outline-dark" style="margin-top: 2%">Update</button>
     </center>
-      </form>
+</form>
+<script>
+    $(function() {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Trigger toast if session has success message
+        @if (session('edited'))
+            toastr.warning("{{ session('edited') }}");
+        @endif
+
+    })
+</script>
 @endsection

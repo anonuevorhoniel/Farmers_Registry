@@ -11,5 +11,9 @@ class assistance extends Model
     use SoftDeletes;
     use HasFactory;
     protected $table = 'assistances';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'value'];
+    public function histories()
+    {
+        return $this->hasMany(AssistanceHistory::class);
+    }
 }

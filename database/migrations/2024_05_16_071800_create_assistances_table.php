@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('assistances', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->decimal('value');
             $table->timestamps();
             $table->softDeletes();
 

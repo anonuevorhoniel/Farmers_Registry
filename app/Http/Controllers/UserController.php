@@ -16,6 +16,10 @@ class UserController extends Controller
         ]);
         if(Auth::attempt($validate))
         {
+            if(Auth::user()->usertype == 'admin')
+            {
+                return redirect()->intended(route("superadmin.index"));
+            }
             return redirect()->intended(route("dashboard"));
         }
         else
@@ -32,6 +36,7 @@ class UserController extends Controller
             'email'=> 'required||unique:users,email',
             'password' => 'required'
         ]);
+        $validate['usertype'] = 'user';
        $create =  User::create($validate);
        if($create)
        {
@@ -42,16 +47,16 @@ class UserController extends Controller
         return redirect()->back()->with('error','');
        }
     }
-    
+
     public function logout(Request $request)
     {
         Auth::logout();
 
         $request->session()->invalidate();
-    
+
         $request->session()->regenerateToken();
-    
+
         return redirect('/');
-        
+
     }
 }

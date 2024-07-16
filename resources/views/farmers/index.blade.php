@@ -17,10 +17,12 @@
 @endsection
 
 @section('content')
-    <a href="/farmers/create"><button class="btn btn-dark">+ Add Farmers</button></a><br><br>
+@section('add_btn')
+<a href="/farmers/create"><button class="btn btn-dark">+ Add Farmers</button></a>
+@endsection
 
-    <table id="tbl_farmers" style="text-align: center" class="table table-hover">
-        <thead class="thead-dark">
+    <table id="tbl_farmers" style="text-align: center" class="table table-hover table-bordered">
+        <thead class="">
             <th>First Name</th>
             <th>Middle Name</th>
             <th>Last Name</th>
@@ -31,6 +33,7 @@
     <script>
         $(document).ready(function() {
             var table = $('#tbl_farmers').DataTable({
+                order: [],
                 processing: true,
                 serverSide: true,
                 autoWidth: false,
@@ -58,6 +61,30 @@
 
                 ]
             });
+            $('#tbl_types').DataTable({
+                "order": []
+            });
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            // Trigger toast if session has success message
+            @if (session('success'))
+                toastr.error("{{ session('success') }}");
+            @endif
         });
     </script>
 @endsection

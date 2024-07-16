@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
+use DateTimeZone;
+use App\Models\AuditTrail;
 use App\Models\FarmerType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FarmerTypeController extends Controller
 {
@@ -29,8 +33,21 @@ class FarmerTypeController extends Controller
     public function store(Request $request)
     {
         $validate = $request->validate(['name' => 'required']);
-        FarmerType::create($validate);
-        return redirect()->back();
+       $success =  FarmerType::create($validate);
+       if($success)
+       {
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'user_name' => Auth::user()->name,
+            'table' => 'Farmer Type',
+            'action' => 'Added',
+            'date' => $date->format('Y-m-d H:i:s')
+
+        ]);
+       }
+        return redirect()->back()->with('success', 'Added Successfully');
     }
 
     /**
@@ -63,12 +80,22 @@ class FarmerTypeController extends Controller
         ]);
         if($type = FarmerType::find($id))
         {
+         $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'user_name' => Auth::user()->name,
+            'table' => 'Farmer Type',
+            'action' => 'Updated',
+            'date' => $date->format('Y-m-d H:i:s')
+
+        ]);
             $type->update([
                 'name' => $validate['name']
             ]);
-           return redirect()->back();
+           return redirect()->back()->with('edited', 'Edited Successfully');
         }
-        
+
     }
 
     /**
@@ -78,8 +105,18 @@ class FarmerTypeController extends Controller
     {
         if($type = FarmerType::find($id))
         {
+         $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'user_name' => Auth::user()->name,
+            'table' => 'Farmer Type',
+            'action' => 'Deleted',
+            'date' => $date->format('Y-m-d H:i:s')
+
+        ]);
             $type->delete();
         }
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Deleted Successfully');
     }
 }

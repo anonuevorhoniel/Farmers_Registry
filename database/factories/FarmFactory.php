@@ -23,7 +23,6 @@ class FarmFactory extends Factory
             'name' => $this->faker->word,
             'city_id' => $this->faker->randomElement(City::pluck('id')->toArray()),
             'size' => $this->faker->numberBetween(50, 150),
-            'crop_type' => $this->faker->word,
         ];
     }
 }

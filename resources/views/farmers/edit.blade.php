@@ -22,7 +22,9 @@
             <ul class="alert alert-danger" style="text-align: center">{{ $error }}</ul>
         @endforeach
     @endif
-    <a href="/farmers/index"><button class="btn btn-dark btn-sm">Go back</button></a><br><br>
+    @section('add_btn')
+    <a href="/farmers/index"><button class="btn btn-dark btn-sm">Go back</button></a>
+    @endsection
     <form method="PUT" action="/farmers/{{ $farmer->id }}/update">
         @csrf
         <div class="row">
@@ -79,7 +81,7 @@
             </div>
             <div class="col-6">
                 <label for="">Farm Name <b style="color: red">*</b></label>
-                <select name="farm_id" class="form-control" id="">
+                <select name="farm_id" class="form-control" id="farm_id">
                     <option value="{{ $farmer->farm->id }}" selected>{{ $farmer->farm->name }}</option>
                     @if ($farms->count() > 0)
                         @foreach ($farms as $farm)
@@ -96,7 +98,7 @@
         <div class="row">
             <div class='col-12'>
                 <label for="">Farm Type <b style="color: red">*</b></label>
-                <select name="farmer_type_id" class="form-control" value="" id="">
+                <select name="farmer_type_id" class="form-control" value="" id="farm_type_id">
                     <option value="{{ $farmer->farmerType->id }}" selected>{{ $farmer->farmerType->name }}</option>
                     @if ($types->count() > 0)
                         @foreach ($types as $type)
@@ -117,4 +119,33 @@
             <button type="submit" class="btn btn-outline-dark" style="margin-top: 2%">Update</button>
         </center>
     </form>
+    <script>
+        $(function() {
+            $('#farm_id').selectize({ sortField: 'text' });
+            $('#farm_type_id').selectize();
+            $('#tbl_types').DataTable();
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            // Trigger toast if session has success message
+            @if (session('edited'))
+                toastr.warning("{{ session('edited') }}");
+            @endif
+
+        })
+    </script>
 @endsection

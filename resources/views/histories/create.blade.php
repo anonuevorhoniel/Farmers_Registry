@@ -35,7 +35,7 @@
                 <center>
                     <label for="exampleInputEmail1" class="form-label">Farmer Name <b style="color: red">*</b></label>
                 </center>
-                <select name="farmer_id" class="form-control" id="">
+                <select name="farmer_id" class="form-control" id="farmer_id">
                     @if (count($farmers) > 0)
                         @foreach ($farmers as $farmer)
                             <option value="{{ $farmer->id }}">{{ $farmer->first_name }} {{ $farmer->middle_name }}
@@ -50,7 +50,7 @@
                 <center>
                     <label for="exampleInputEmail1" class="form-label">Assistance <b style="color: red">*</b></label>
                 </center>
-                <select name="assistance_id" class="form-control" id="">
+                <select name="assistance_id" class="form-control" id="assistance">
                     @if (count($assistances) > 0)
                         @foreach ($assistances as $assistance)
                             <option value="{{ $assistance->id }}">{{ $assistance->name }} </option>
@@ -71,4 +71,31 @@
             <button type="submit" class="btn btn-outline-dark" style="margin-top: 2%">Submit</button>
         </center>
     </form>
+    <script>
+        $(function() {
+            $('#farmer_id').selectize();
+        $('#assistance').selectize();
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            // Trigger toast if session has success message
+            @if (session('success'))
+                toastr.success("{{ session('success') }}");
+            @endif
+        })
+    </script>
 @endsection

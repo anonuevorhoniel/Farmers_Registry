@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assistance;
+use DateTime;
+use DateTimeZone;
+use App\Models\Assistance;
+use App\Models\AuditTrail;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AssistanceController extends Controller
 {
@@ -14,8 +19,6 @@ class AssistanceController extends Controller
     {
         if ($request->ajax()) {
             $assistances = assistance::select('*');
-    
-            // Create custom data for each assistance
             return datatables()->of($assistances)
             ->addColumn('action', function ($assistance) {
                 return '  <div class="dropdown">
@@ -24,6 +27,7 @@ class AssistanceController extends Controller
                     Action
                 </button>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item editbtn" data-name="' . $assistance->name . '" href="/assistances/' . $assistance->id . '/report">View Report</a></li>
                     <li><a class="dropdown-item editbtn" data-name="' . $assistance->name . '" href="/assistances/' . $assistance->id . '/edit">Edit</a></li>
                     <li><a class="dropdown-item" href="/assistances/' . $assistance->id . '/destroy">Delete</a></li>
                 </ul>
@@ -33,10 +37,17 @@ class AssistanceController extends Controller
         }
         return view('assistances.index');
     }
-    
 
+    public function report($id, Request $request)
+    {
+        $assistance = Assistance::find($id);
+        if($assistance)
+        {
+            return view('assistances/report', ['reports' => $assistance->histories]);
+        }
+    }
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource.s
      */
     public function create()
     {
@@ -50,9 +61,23 @@ class AssistanceController extends Controller
     {
        $validate = $request->validate([
             'name'=> 'required',
+            'value' => 'required'
         ]);
-        Assistance::create($validate);
-        return redirect()->back();
+       $success = Assistance::create($validate);
+       if($success)
+       {
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+        AuditTrail::create([
+            'user_id' => Auth::user()->id,
+            'user_name' => Auth::user()->name,
+            'table' => 'Assistance',
+            'action' => 'Added',
+            'date' => $date->format('Y-m-d H:i:s')
+
+        ]);
+       }
+        return redirect()->back()->with('success', 'Assistance Added');
     }
 
     /**
@@ -72,7 +97,7 @@ class AssistanceController extends Controller
         {
             return view('assistances/edit', ['assistance' => $assistance]);
         }
-        
+
     }
 
     /**
@@ -80,14 +105,25 @@ class AssistanceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validate = $request->validate(['name' => 'required' ]);
+        $validate = $request->validate(['name' => 'required', 'value' => 'required' ]);
         if($assistance = Assistance::find($id))
         {
             $assistance->update([
                 'name'=> $request->name,
+                'value' => $request->value
+            ]);
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'Assistance',
+                'action' => 'Updated',
+                'date' => $date->format('Y-m-d H:i:s')
+
             ]);
         }
-        return redirect()->back();
+        return redirect()->back()->with('edited', 'Edited Successfully');
     }
 
     /**
@@ -98,7 +134,17 @@ class AssistanceController extends Controller
         if($assistance = Assistance::find($id))
         {
             $assistance->delete();
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone('Asia/Shanghai'));
+            AuditTrail::create([
+                'user_id' => Auth::user()->id,
+                'user_name' => Auth::user()->name,
+                'table' => 'Assistance',
+                'action' => 'Deleted',
+                'date' => $date->format('Y-m-d H:i:s')
+
+            ]);
         }
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Deleted');
     }
 }

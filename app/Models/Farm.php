@@ -13,19 +13,23 @@ class farm extends Model
     use SoftDeletes;
     use HasFactory;
     protected $table = 'farms';
-    protected $fillable = ['name',	'city_id',	'size',	'crop_type'];
+    protected $fillable = ['name',	'city_id',	'size'];
 
     public function city()
     {
         return $this->belongsTo(City::class);
     }
-    public function farmer()
+    public function farmers()
     {
        return $this->hasMany(Farmer::class);
     }
     public function delete()
     {
-        $this->farmer()->delete();
+        $this->farmers()->delete();
         parent::delete();
+    }
+    public function farm_crops()
+    {
+        return $this->hasMany(FarmCrop::class);
     }
 }
